@@ -1,0 +1,3 @@
+# robots.txt for RPlayer Demo
+User-agent: *
+Allow: /

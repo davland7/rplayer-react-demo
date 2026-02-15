@@ -1,12 +1,17 @@
 # RPlayer React Demo
 
-Interactive demo for [@davland7/rplayer](https://www.npmjs.com/package/@davland7/rplayer) — a lightweight audio player library with HLS support.
+Interactive demo for [@davland7/rplayer](https://www.npmjs.com/package/@davland7/rplayer), a lightweight audio player with HLS support.
+
+[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/github/davland7/rplayer-react-demo)
 
 ## Features
 
-- Stream audio from any URL (MP3, HLS, etc.)
-- Toggle between native HLS and HLS.js playback
-- Detect browser capabilities (native HLS, HLS.js, iOS)
+- Play audio streams from any URL (MP3, HLS, etc.)
+- Switch between native HLS and HLS.js
+- Automatic capability detection:
+  - Native HLS support
+  - HLS.js availability
+  - iOS detection
 
 ## Getting Started
 
@@ -15,10 +20,14 @@ npm install
 npm run dev
 ```
 
-## Stack
+## Tech Stack
 
 - [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
 - [Vite](https://vite.dev/)
 - [Tailwind CSS](https://tailwindcss.com/) v4
 - [RPlayer](https://www.npmjs.com/package/@davland7/rplayer)
 - [HLS.js](https://github.com/video-dev/hls.js/)
+
+## Purpose
+
+This repository provides a minimal, developer‑focused example of how to integrate RPlayer into a React application. It is intentionally simple and unstyled to make the logic easy to understand.

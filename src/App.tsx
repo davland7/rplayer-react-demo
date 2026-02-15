@@ -14,6 +14,7 @@ function App() {
     const audio = document.createElement('audio');
     return audio.canPlayType('application/vnd.apple.mpegurl') !== '';
   });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Use HLS.js when forced OR when native HLS is not available
   const isHlsStream = RPlayer.isHls(streamUrl);
@@ -33,8 +34,15 @@ function App() {
     const onWaiting = () => setButtonState('loading');
     const onCanPlay = () => setButtonState(audio.paused ? 'play' : 'pause');
     const onError = () => {
-      console.error('Audio error:', audio.error);
-      setButtonState('play');
+      if (audio.error?.code === 4 && (audio.src === '' || audio.src === globalThis.location.href)) {
+        return;
+      }
+
+      if (audio.error) {
+        setErrorMessage(`Audio error: ${audio.error.message || 'Unknown error'}`);
+        console.error('Audio error:', audio.error);
+        setButtonState('play');
+      }
     };
 
     audio.addEventListener('play', onPlay);
@@ -56,7 +64,7 @@ function App() {
   // Load (or reload) the stream source
   const loadStream = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !streamUrl) return;
 
     // Tear down previous HLS.js instance
     if (hlsRef.current) {
@@ -112,20 +120,14 @@ function App() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100 text-neutral-900 p-4">
-
-      {/* Pas de boîte, juste un wrapper pour centrer */}
-      <div className="p-4 max-w-lg w-full">
-
+      <main role="main" className="p-4 max-w-lg w-full">
         <h1 className="text-3xl font-bold text-neutral-900 mb-2 text-center">
           RPlayer Demo
         </h1>
-
         <p className="text-neutral-600 mb-6 text-center text-sm">
           Minimal Audio Stream Controller
         </p>
-
         <audio ref={audioRef} preload="none"></audio>
-
         {/* Stream URL */}
         <div className="mb-4">
           <label
@@ -134,37 +136,21 @@ function App() {
           >
             Stream URL
           </label>
-
           <input
             id="streamUrl"
             type="url"
             value={streamUrl}
             onChange={(e) => setStreamUrl(e.target.value)}
-            className="
-              w-full px-4 py-2
-              bg-white
-              border border-neutral-900
-              rounded-lg
-              text-neutral-900
-              focus:outline-none focus:ring-2 focus:ring-neutral-900
-            "
+            className="w-full px-4 py-2 bg-white border border-neutral-900 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
             placeholder="https://example.com/stream.m3u8"
           />
-
           <a
             href="https://davland7.github.io/"
             target="_blank"
             rel="noopener noreferrer"
-            className="
-              inline-block mt-1 text-xs
-              text-neutral-900
-              border-b border-neutral-900
-              pb-[1px]
-              hover:border-transparent
-              transition-colors
-            "
+            className="inline-block mt-1 text-xs text-neutral-900 border-b border-neutral-900 pb-[1px] hover:border-transparent transition-colors"
           >
-            Find a stream URL to test →
+            Find a stream URL to test
           </a>
         </div>
 
@@ -176,37 +162,17 @@ function App() {
             checked={shouldUseHlsJs}
             disabled={!isHlsStream || !nativeHls}
             onChange={(e) => setForceHlsJs(e.target.checked)}
-            className="
-              w-4 h-4
-              text-neutral-900
-              bg-white
-              border-neutral-900
-              rounded
-              focus:ring-neutral-900
-              disabled:opacity-50
-            "
+            className="w-4 h-4 text-neutral-900 bg-white border-neutral-900 rounded focus:ring-neutral-900 disabled:opacity-50"
           />
           <label htmlFor="useHlsJs" className="ml-2 text-sm text-neutral-800">
             {getHlsLabel()}
           </label>
         </div>
-
-        {/* Bouton natif minimal + cursor pointer */}
         <button
           onClick={handleTogglePlay}
           disabled={buttonState === "loading"}
           className="
-            w-full px-4 py-2
-            bg-neutral-200
-            text-neutral-900
-            border border-neutral-400
-            rounded
-            hover:bg-neutral-300 hover:cursor-pointer
-            active:bg-neutral-400 active:scale-[0.99]
-            transition
-            font-normal text-sm
-            disabled:opacity-50 disabled:cursor-not-allowed
-          "
+            w-full px-4 py-2 not-first:bg-neutral-200 text-neutral-900 border border-neutral-400 rounded hover:bg-neutral-300 hover:cursor-pointer active:bg-neutral-400 active:scale-[0.99] transition font-normal text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {buttonState === "play" && "Play"}
           {buttonState === "loading" && "Loading..."}
@@ -215,12 +181,10 @@ function App() {
 
         {/* Console Info */}
         <div className="mt-6 p-4 bg-neutral-900 text-neutral-100 rounded-lg text-xs font-mono border border-neutral-800 shadow-inner space-y-1">
-
           <p>
             <span className="text-green-400">›</span> Native HLS:{" "}
             {nativeHls ? "true" : "false"}
           </p>
-
           <p>
             <span className="text-green-400">›</span> HLS.js:{" "}
             {Hls.isSupported() ? "true" : "false"}
@@ -228,15 +192,17 @@ function App() {
               <span className="ml-1 text-blue-400">(active)</span>
             )}
           </p>
-
           <p>
             <span className="text-green-400">›</span> iOS:{" "}
             {RPlayer.isIos() ? "true" : "false"}
           </p>
-
         </div>
-
-      </div>
+        {errorMessage && (
+          <div className="mt-4 p-3 bg-red-100 text-red-800 rounded-lg border border-red-300">
+            {errorMessage}
+          </div>
+        )}
+      </main>
     </div>
   );
 }
