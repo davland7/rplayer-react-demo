@@ -2,7 +2,7 @@
 
 Interactive demo for [@davland7/rplayer](https://www.npmjs.com/package/@davland7/rplayer), a lightweight audio player with HLS support.
 
-[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/github/davland7/rplayer-react-demo)
+[![Open in CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/github/davland7/rplayer-react-demo/main?embed=1)
 
 ## Features
 
