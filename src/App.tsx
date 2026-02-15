@@ -10,10 +10,7 @@ function App() {
   const [streamUrl, setStreamUrl] = useState('');
   const [forceHlsJs, setForceHlsJs] = useState(false);
   const [buttonState, setButtonState] = useState<'play' | 'loading' | 'pause'>('play');
-  const [nativeHls] = useState(() => {
-    const audio = document.createElement('audio');
-    return audio.canPlayType('application/vnd.apple.mpegurl') !== '';
-  });
+  const [nativeHls] = useState(() => RPlayer.supportsHls());
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Use HLS.js when forced OR when native HLS is not available
@@ -182,19 +179,18 @@ function App() {
         {/* Console Info */}
         <div className="mt-6 p-4 bg-neutral-900 text-neutral-100 rounded-lg text-xs font-mono border border-neutral-800 shadow-inner space-y-1">
           <p>
-            <span className="text-green-400">›</span> Native HLS:{" "}
-            {nativeHls ? "true" : "false"}
+            <span className="text-green-400">›</span> Native HLS support: {" "}
+            {nativeHls ? "yes" : "no"}
           </p>
           <p>
-            <span className="text-green-400">›</span> HLS.js:{" "}
-            {Hls.isSupported() ? "true" : "false"}
+            <span className="text-green-400">›</span> HLS.js support: {" "}
+            {Hls.isSupported() ? "yes" : "no"}
             {shouldUseHlsJs && (
               <span className="ml-1 text-blue-400">(active)</span>
             )}
           </p>
           <p>
-            <span className="text-green-400">›</span> iOS:{" "}
-            {RPlayer.isIos() ? "true" : "false"}
+            <span className="text-green-400">›</span> iOS: {RPlayer.isIos() ? "yes" : "no"}
           </p>
         </div>
         {errorMessage && (
